@@ -7,12 +7,14 @@ extern CFiberScheduler* g_pFiberScheduler = 0;
 
 CSpinlock enQueueLock;
 
-CFiberScheduler::CFiberScheduler()
+void CFiberScheduler::Initialise(const int maxFiberCount, const int maxRunningFibers)
 {
-	for (int i = 0 ; i < k_maxFiberPool ; ++i)
-	{
-		m_fiberPool[i].Init(i, __NYLON_DEFAULT_FIBER_STACK_SIZE);
-	}
+
+}
+
+void CFiberScheduler::Shutdown()
+{
+
 }
 
 CFiber* CFiberScheduler::AcquireNextFiber(CFiber* pOldFiber)
@@ -105,6 +107,26 @@ void CFiberScheduler::AllocateJobs()
 			}
 		}
 	}
+}
+
+bool CFiberScheduler::IsActive()
+{
+	for (int i = 0; i < k_maxRunningFibers; ++i)
+	{
+		CFiber* pActiveFiber = m_activeFibers[i].second;
+		if (!pActiveFiber->InState(CFiber::eFS_WaitingForJob))
+		{
+			return true;
+		}
+	}
+	for (int i = 0; i < eFP_Num; ++i)
+	{
+		if (!m_jobQueue[i].empty())
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
 /*Static*/ void CFiberScheduler::Schedule(SJobRequest& job, EFiberPriority prio, CFiberJobData& data, CFiberCounter* pCounter /*= NULL */)

@@ -11,10 +11,6 @@
 #include "Util/JobQueue.h"
 #include <mutex>
 
-#ifndef __NYLON_DEFAULT_FIBER_STACK_SIZE
-#define __NYLON_DEFAULT_FIBER_STACK_SIZE 0
-#endif
-
 #define __NYLON__GETJOBINFO static_cast<CFiber*>(GetFiberData())->GetJobInfo()->m_jobData
 
 enum EFiberPriority
@@ -29,36 +25,19 @@ enum EFiberPriority
 class CFiberScheduler
 {
 public:
-	CFiberScheduler();
-	~CFiberScheduler() 
-	{
-	}
+	CFiberScheduler() {}
+	~CFiberScheduler() {}
 	
+	void Initialise(const int maxFiberCount, const int maxRunningFibers);
+	void Shutdown();
+
 	CFiber* AcquireNextFiber(CFiber* pOldFiber);
 	static void Schedule(SJobRequest& job, EFiberPriority prio, CFiberJobData& data, CFiberCounter* pCounter = NULL);
 	void FiberYield(CFiber* pFiber, CFiberCounter* pCounter);
 
 	void StartJobs();
 	void AllocateJobs();
-	bool IsActive()
-	{
-		for (int i = 0 ; i < k_maxRunningFibers; ++i)
-		{
-			CFiber* pActiveFiber = m_activeFibers[i].second;
-			if (!pActiveFiber->InState(CFiber::eFS_WaitingForJob))
-			{
-				return true;
-			}
-		}
-		for (int i = 0 ; i < eFP_Num ; ++i)
-		{
-			if (!m_jobQueue[i].empty())
-			{
-				return true;
-			}
-		}
-		return false;
-	}
+	bool IsActive();
 
 	void PrintAverageJobTime();
 

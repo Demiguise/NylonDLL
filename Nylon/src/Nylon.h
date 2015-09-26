@@ -1,14 +1,8 @@
-#ifdef NYLON_EXPORTS
-#define NYLON_API _declspec(dllexport)
-#else
-#define NYLON_API _declspec(dllimport)
-#endif
-
 //API Outline
 //Memory
-//End User handles memory requirements, they pass in a pointer to a block of memory for the library to use.
-//In this memory, we create the scheduler and intialise all the number of requested thread objects.
-//They also handle the job contexts (aka workspaces) for each of the queued functions.
+//Initialising the NylonAPI via the Nylon::Init call will create the relevant objects in the DLL's memory space(? I think, unsure how DLL Memory actually works).
+//This is because I can't guarentee the static nature of the queue/number of threads. If the user gave me some memory, I might overrun it if they shove a shit-ton of job requests into.
+//End user will, however, handle the job contexts (aka workspaces) for each of the queued functions.
 
 //Jobs
 //Jobs are individual requests to run a specific function together with a priority, stack space size and job context.
@@ -33,7 +27,9 @@
 
 //Fibres
 //Fibres are smaller versions of threads, they come with their own stack space and fibre storage. In addition, they are extremely easy to switch between.
-//
+//Fibres do, however, run on threads and are started via a thread with a call to ConvertThreadToFiber.
+//Fibres have to be run in a chain continously. If they need to wait until there are available jobs then they will wait in a spinlock.
+//If the fibre somehow exits without having another one ready then the thread running the fibre will be destroyed.
 
 //Nylon Fibre Implementation
 //Nylon implements wrapper objects to handle the instantiation and proper destruction of fibre stack space.
@@ -41,18 +37,40 @@
 //That new Fibre then releases the previously finished one so everything clears up.
 
 //Fibre state follows this rough procedure.
-//1) Inactive - Isn't doing anything.
-//2) WaitingForJob - Has no job, currently waiting on one.
-//3) Bound - Has a job bound to it, but hasn't started the job.
-//4) Active - Has a job bound to it and is currently working through it.
-//5) Finished - Has finished the bound job
-//6) HasNextFiber - Has taken a job off of the queue and is ready to switch
-//7) Releasing - Has passed over to new fibre and is ready to be released
-//8) Yielded - Has yielded to another fibre, until a linked timer has been decremented to zero
+// Inactive - Isn't doing anything.
+// WaitingForJob - Has no job, currently waiting on one.
+// Bound - Has a job bound to it, but hasn't started the job.
+// Active - Has a job bound to it and is currently working through it.
+// Finished - Has finished the bound job
+// HasNextFiber - Has taken a job off of the queue and is ready to switch
+// Releasing - Has passed over to new fibre and is ready to be released
+// Yielded - Has yielded to another fibre, until a linked timer has been decremented to zero
 
 
+//Rough Enduser workflow
+//
+//1) Initialise via Init API call, setting up the workspace. If in debug, setup logging callback.
+//2) Declare jobs descriptions in their local area.
+//3) Set up context for job and make sure it has a long enough lifetime.
+//4) Queue the job via API call, recieve back ID for job.
+//5) Let job run.
+//6) Get callback? (Dunno, haven't thought about that too much.)
+//7) If we need to cancel, call the API function to delete that job from the queue or force it to stop.
+//8) If we're quitting the application, shutdown the engine.
+//9) During periods of inactivity, we should probably have the ability to let each fiber die so we're not wasting CPU. (Some kind of "Stop" or "Pause" function?)
 
+#ifdef NYLON_EXPORTS
+#define NYLON_API _declspec(dllexport)
+#else
+#define NYLON_API _declspec(dllimport)
+#endif
 
 namespace Nylon
 {
+	typedef unsigned int TJobID;
+	//Init - fiberCount is the number of available Fiber objects, max running fibers determines how many can run at once.
+	NYLON_API void Init(const int fiberCount, const int maxRunningFibers);
+	NYLON_API void Shutdown();
+	NYLON_API TJobID QueueJob();
+	NYLON_API bool CancelJob(const TJobID jobToCancel);
 }
