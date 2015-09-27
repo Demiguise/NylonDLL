@@ -16,8 +16,6 @@
 
 #define __NYLON_RELEASE_FIBER if(x) { x->Release(); x = NULL; }
 
-// TODO: reference additional headers your program requires here
-
 static const char* AppendNewlineChar(const char* input)
 {
 	int inputSize = strlen(input);
@@ -43,20 +41,4 @@ static void DebugLog(const char* frmt, ...)
 	va_end(args);
 	PushToLogs((LPCSTR)buffer);
 	delete newLogLine;
-}
-
-static float Clampf(const float val, const float minVal, const float maxVal)
-{
-	if (val < minVal)
-	{
-		return minVal;
-	}
-	else if (val > maxVal)
-	{
-		return maxVal;
-	}
-	else
-	{
-		return val;
-	}
 }

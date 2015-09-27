@@ -3,18 +3,25 @@
 #include "CoreThread.h"
 #include "Util/Spinlock.h"
 
-extern CFiberScheduler* g_pFiberScheduler = 0;
-
 CSpinlock enQueueLock;
+
+CFiberScheduler::CFiberScheduler()
+{
+
+}
 
 void CFiberScheduler::Initialise(const int maxFiberCount, const int maxRunningFibers)
 {
+	m_fiberPool = new CFiber[maxFiberCount];
+	m_activeFibers = new TActiveFibers[maxRunningFibers];
+
 
 }
 
 void CFiberScheduler::Shutdown()
 {
-
+	delete m_fiberPool;
+	delete m_activeFibers;
 }
 
 CFiber* CFiberScheduler::AcquireNextFiber(CFiber* pOldFiber)
@@ -35,7 +42,7 @@ CFiber* CFiberScheduler::AcquireNextFiber(CFiber* pOldFiber)
 		it++;
 	}
 
-	for (int i = 0 ; i < k_maxFiberPool ; ++i)
+	for (int i = 0 ; i < m_maxFibers ; ++i)
 	{
 		CFiber& fiber = m_fiberPool[i];
 		if (fiber.AtomicStateSwitch(CFiber::eFS_InActive, CFiber::eFS_WaitingForJob))
@@ -45,7 +52,7 @@ CFiber* CFiberScheduler::AcquireNextFiber(CFiber* pOldFiber)
 		}
 	}
 
-	for (int i = 0 ; i < eFP_Num ; ++i)
+	for (int i = 0 ; i < Nylon::eFP_Num ; ++i)
 	{
 		CScopedLock lock(&enQueueLock);
 		if (!m_jobQueue[i].empty())
@@ -70,7 +77,7 @@ CFiber* CFiberScheduler::AcquireNextFiber(CFiber* pOldFiber)
 
 void CFiberScheduler::StartJobs()
 {
-	for (int i = 0 ; i< k_maxRunningFibers ; ++i)
+	for (int i = 0 ; i< m_maxRunningFibers; ++i)
 	{
 		SThreadInfo& info = m_activeFibers[i].first;
 		CFiber* pInitialFiber = AcquireNextFiber(NULL);
@@ -83,7 +90,7 @@ void CFiberScheduler::StartJobs()
 
 void CFiberScheduler::AllocateJobs()
 {
-	for (int i = 0 ; i < k_maxRunningFibers ; ++i)
+	for (int i = 0 ; i < m_maxRunningFibers; ++i)
 	{
 		if (CFiber* pFiber = m_activeFibers[i].second)
 		{
@@ -111,7 +118,7 @@ void CFiberScheduler::AllocateJobs()
 
 bool CFiberScheduler::IsActive()
 {
-	for (int i = 0; i < k_maxRunningFibers; ++i)
+	for (int i = 0; i < m_maxRunningFibers; ++i)
 	{
 		CFiber* pActiveFiber = m_activeFibers[i].second;
 		if (!pActiveFiber->InState(CFiber::eFS_WaitingForJob))
@@ -119,7 +126,7 @@ bool CFiberScheduler::IsActive()
 			return true;
 		}
 	}
-	for (int i = 0; i < eFP_Num; ++i)
+	for (int i = 0; i < Nylon::eFP_Num; ++i)
 	{
 		if (!m_jobQueue[i].empty())
 		{
@@ -129,14 +136,13 @@ bool CFiberScheduler::IsActive()
 	return false;
 }
 
-/*Static*/ void CFiberScheduler::Schedule(SJobRequest& job, EFiberPriority prio, CFiberJobData& data, CFiberCounter* pCounter /*= NULL */)
+void CFiberScheduler::Schedule(SJobRequest& job, Nylon::EJobPriority prio, CFiberJobData& data, CFiberCounter* pCounter /*= NULL */)
 {
 	job.m_jobData = data;
 	job.m_pCounter = pCounter;
 	CScopedLock lock(&enQueueLock);
-	g_pFiberScheduler->m_jobQueue[prio].push(job);
+	m_jobQueue[prio].push(job);
 }
-
 
 void CFiberScheduler::FiberYield(CFiber* pFiber, CFiberCounter* pCounter)
 {
@@ -147,7 +153,7 @@ void CFiberScheduler::FiberYield(CFiber* pFiber, CFiberCounter* pCounter)
 void CFiberScheduler::UpdateActiveFibers(CFiber* pFiber)
 {
 	DWORD curThreadId = GetCurrentThreadId();
-	for (int i = 0 ; i < k_maxRunningFibers ; ++i)
+	for (int i = 0; i < m_maxRunningFibers; ++i)
 	{
 		if (m_activeFibers[i].first.m_threadID == curThreadId)
 		{
@@ -155,6 +161,27 @@ void CFiberScheduler::UpdateActiveFibers(CFiber* pFiber)
 			break;
 		}
 	}
+}
+
+void CFiberScheduler::Log(const int logLevel, const char* frmt, ...)
+{
+	char buffer[512];
+	const char* newLogLine = AppendNewlineChar(frmt);
+	va_list args;
+	va_start(args, frmt);
+	vsnprintf_s(buffer, 512, newLogLine, args);
+	va_end(args);
+
+	if (m_logCallback)
+	{
+		m_logCallback(logLevel, newLogLine);
+	}
+	else
+	{
+		OutputDebugStringA(newLogLine);
+	}
+
+	delete newLogLine;
 }
 
 void CFiberScheduler::PrintAverageJobTime()
@@ -178,6 +205,11 @@ void CFiberScheduler::PrintAverageJobTime()
 	}
 
 	avg /= numJobs;
-	DebugLog("JPS: %d | ATPJ: %f | (%f...%f) | Total:%f", (int)numJobs, avg, lowest, highest, (numJobs * avg) / k_maxRunningFibers);
+	DebugLog("JPS: %d | ATPJ: %f | (%f...%f) | Total:%f", (int)numJobs, avg, lowest, highest, (numJobs * avg) / m_maxRunningFibers);
 	m_avgTimes.clear();
+}
+
+void CFiberScheduler::SetLoggingCallback(LoggingCallback callback)
+{
+	m_logCallback = callback;
 }

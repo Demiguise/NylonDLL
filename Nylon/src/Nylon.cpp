@@ -15,6 +15,11 @@ NYLON_API void Nylon::Init(const int fiberCount, const int maxRunningFibers)
 
 NYLON_API void Nylon::Shutdown()
 {
-	g_pFiberScheduler->ShutDown();
+	g_pFiberScheduler->Shutdown();
 	delete g_pFiberScheduler;
+}
+
+NYLON_API void Nylon::SetLoggingCallback()
+{
+
 }

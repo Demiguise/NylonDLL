@@ -1,8 +1,8 @@
 #ifndef __JOBQUEUE_H__
 #define __JOBQUEUE_H__
 
-#include "Common/Spinlock.h"
-#include "Fiber.h"
+#include "Util/Spinlock.h"
+#include "Fibers/Fiber.h"
 #include <list>
 
 class CJobQueue

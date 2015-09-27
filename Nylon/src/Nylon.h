@@ -68,9 +68,24 @@
 namespace Nylon
 {
 	typedef unsigned int TJobID;
+
+	enum EJobPriority
+	{
+		eFP_High = 0,
+		eFP_Normal,
+		eFP_Low,
+		eFP_Num
+	};
+
 	//Init - fiberCount is the number of available Fiber objects, max running fibers determines how many can run at once.
 	NYLON_API void Init(const int fiberCount, const int maxRunningFibers);
 	NYLON_API void Shutdown();
-	NYLON_API TJobID QueueJob();
+
+	//QueueJob - Puts a new job request into the the queue with the specified priority.
+	NYLON_API TJobID QueueJob(EJobPriority priority);
 	NYLON_API bool CancelJob(const TJobID jobToCancel);
-}
+
+	NYLON_API void DeclareJob(LPFIBER_START_ROUTINE jobFunction);
+
+	NYLON_API void SetLoggingCallback();
+};
