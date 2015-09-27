@@ -20,12 +20,12 @@ public:
 	CFiberScheduler();
 	~CFiberScheduler() {}
 	
-	void Initialise(const int maxFiberCount, const int maxRunningFibers);
+	void Initialise(const int maxFiberCount, const int maxThreads);
 	void Shutdown();
 
 	CFiber* AcquireNextFiber(CFiber* pOldFiber);
 	void Schedule(SJobRequest& job, Nylon::EJobPriority prio, CFiberJobData& data, CJobCounter* pCounter = NULL);
-	void FiberYield(CFiber* pFiber, CJobCounter* pCounter);
+	static void FiberYield(CFiber* pFiber, CJobCounter* pCounter);
 
 	void StartJobs();
 	void AllocateJobs();
@@ -59,5 +59,7 @@ private:
 
 	LoggingCallback m_logCallback;
 };
+
+extern CFiberScheduler* g_pFiberScheduler;
 
 #endif //~__CFIBERSCHEDULER_H__

@@ -77,8 +77,8 @@ namespace Nylon
 		eFP_Num
 	};
 
-	//Init - fiberCount is the number of available Fiber objects, max running fibers determines how many can run at once.
-	NYLON_API void Init(const int fiberCount, const int maxRunningFibers);
+	//Init - fiberCount is the number of available Fiber objects, maxThreads is the number of concurrently active fibers.
+	NYLON_API void Init(const int fiberCount, const int maxThreads);
 	NYLON_API void Shutdown();
 
 	//QueueJob - Puts a new job request into the the queue with the specified priority, data and counter.

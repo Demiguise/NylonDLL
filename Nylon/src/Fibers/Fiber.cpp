@@ -118,7 +118,7 @@ void CFiber::ReleasePrevious()
 }
 
 #pragma optimize("", off)
-/*Static*/ void CFiber::YieldForCounter(CFiberCounter* counter)
+void CFiber::YieldForCounter(CJobCounter* counter)
 {
 	CFiber* pFiber = (CFiber*)GetFiberData();
 	g_pFiberScheduler->FiberYield(pFiber, counter);
@@ -152,7 +152,7 @@ void CFiber::EndJob()
 	PERFTIMER_FUNC();
 	if (m_job.m_pCounter)
 	{
-		m_job.m_pCounter->DecrementCounter();
+		m_job.m_pCounter->Decrement();
 	}
 
 	assert(!m_pNextFiber);

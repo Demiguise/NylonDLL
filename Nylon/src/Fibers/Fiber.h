@@ -91,12 +91,6 @@ struct SJobRequest
 		, m_pCounter(NULL)
 		, m_pFiber(NULL) {}
 
-	SJobRequest(LPFIBER_START_ROUTINE job, std::string jobName)
-		: m_jobName(jobName)
-		, m_pFunc(job)
-		, m_pCounter(NULL)
-		, m_pFiber(NULL) {}
-
 	SJobRequest& operator= (SJobRequest rhs)
 	{
 		m_jobName = rhs.m_jobName;

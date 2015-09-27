@@ -5,15 +5,17 @@
 
 CSpinlock enQueueLock;
 
+CFiberScheduler* g_pFiberScheduler = NULL;
+
 CFiberScheduler::CFiberScheduler()
 {
-
+	g_pFiberScheduler = this;
 }
 
-void CFiberScheduler::Initialise(const int maxFiberCount, const int maxRunningFibers)
+void CFiberScheduler::Initialise(const int maxFiberCount, const int maxThreads)
 {
 	m_fiberPool = new CFiber[maxFiberCount];
-	m_activeFibers = new TActiveFibers[maxRunningFibers];
+	m_activeFibers = new TActiveFibers[maxThreads];
 
 	for (int i = 0; i < maxFiberCount; ++i)
 	{
