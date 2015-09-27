@@ -15,7 +15,10 @@ void CFiberScheduler::Initialise(const int maxFiberCount, const int maxRunningFi
 	m_fiberPool = new CFiber[maxFiberCount];
 	m_activeFibers = new TActiveFibers[maxRunningFibers];
 
-
+	for (int i = 0; i < maxFiberCount; ++i)
+	{
+		m_fiberPool[i].Init(i, 0);
+	}
 }
 
 void CFiberScheduler::Shutdown()
@@ -136,7 +139,7 @@ bool CFiberScheduler::IsActive()
 	return false;
 }
 
-void CFiberScheduler::Schedule(SJobRequest& job, Nylon::EJobPriority prio, CFiberJobData& data, CFiberCounter* pCounter /*= NULL */)
+void CFiberScheduler::Schedule(SJobRequest& job, Nylon::EJobPriority prio, CFiberJobData& data, CJobCounter* pCounter /*= NULL */)
 {
 	job.m_jobData = data;
 	job.m_pCounter = pCounter;
@@ -144,7 +147,7 @@ void CFiberScheduler::Schedule(SJobRequest& job, Nylon::EJobPriority prio, CFibe
 	m_jobQueue[prio].push(job);
 }
 
-void CFiberScheduler::FiberYield(CFiber* pFiber, CFiberCounter* pCounter)
+void CFiberScheduler::FiberYield(CFiber* pFiber, CJobCounter* pCounter)
 {
 	pFiber->SetState(CFiber::eFS_Yielded);
 	m_yieldedFibers.insert(TAtomicFiberPair(pFiber, pCounter));

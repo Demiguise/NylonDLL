@@ -24,8 +24,8 @@ public:
 	void Shutdown();
 
 	CFiber* AcquireNextFiber(CFiber* pOldFiber);
-	void Schedule(SJobRequest& job, Nylon::EJobPriority prio, CFiberJobData& data, CFiberCounter* pCounter = NULL);
-	void FiberYield(CFiber* pFiber, CFiberCounter* pCounter);
+	void Schedule(SJobRequest& job, Nylon::EJobPriority prio, CFiberJobData& data, CJobCounter* pCounter = NULL);
+	void FiberYield(CFiber* pFiber, CJobCounter* pCounter);
 
 	void StartJobs();
 	void AllocateJobs();
@@ -38,8 +38,8 @@ public:
 
 private:
 	typedef std::pair<SThreadInfo, CFiber*> TActiveFibers;
-	typedef std::map<CFiber*, CFiberCounter*> TAtomicFiberMap;
-	typedef std::pair<CFiber*, CFiberCounter*> TAtomicFiberPair;
+	typedef std::map<CFiber*, CJobCounter*> TAtomicFiberMap;
+	typedef std::pair<CFiber*, CJobCounter*> TAtomicFiberPair;
 
 	void UpdateActiveFibers(CFiber* pFiber);
 

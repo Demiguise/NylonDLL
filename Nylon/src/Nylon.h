@@ -81,11 +81,9 @@ namespace Nylon
 	NYLON_API void Init(const int fiberCount, const int maxRunningFibers);
 	NYLON_API void Shutdown();
 
-	//QueueJob - Puts a new job request into the the queue with the specified priority.
-	NYLON_API TJobID QueueJob(EJobPriority priority);
+	//QueueJob - Puts a new job request into the the queue with the specified priority, data and counter.
+	NYLON_API TJobID QueueJob(LPFIBER_START_ROUTINE pJob, EJobPriority jobPriority, void* pJobData, CJobCounter* pCounter = NULL);
 	NYLON_API bool CancelJob(const TJobID jobToCancel);
-
-	NYLON_API void DeclareJob(LPFIBER_START_ROUTINE jobFunction);
 
 	NYLON_API void SetLoggingCallback();
 };

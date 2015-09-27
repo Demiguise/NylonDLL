@@ -60,23 +60,23 @@ private:
 };
 
 typedef std::atomic<int> TCounter;
-class CFiberCounter
+class CJobCounter
 {
 public:
-	CFiberCounter(int initialCount, std::string funcName = "Default")
+	CJobCounter(int initialCount, std::string funcName = "Default")
 		: m_funcName(funcName)
 	{
 		m_counter.store(initialCount);
 	}
 
-	~CFiberCounter() {}
+	~CJobCounter() {}
 
 	bool IsComplete() const { return (m_counter.load() == 0); }
-	void DecrementCounter() { m_counter--; }
+	void Decrement() { m_counter--; }
 	const char* GetName() const { return m_funcName.c_str(); }
 
 private:
-	CFiberCounter& operator= (CFiberCounter& rhs); //Forcing no copy operator
+	CJobCounter& operator= (CJobCounter& rhs); //Forcing no copy operator
 	std::string m_funcName;
 	TCounter m_counter;
 };
@@ -110,7 +110,7 @@ struct SJobRequest
 	std::string m_jobName;
 	LPFIBER_START_ROUTINE m_pFunc;
 	CFiberJobData m_jobData;
-	CFiberCounter* m_pCounter;
+	CJobCounter* m_pCounter;
 	CFiber* m_pFiber;
 };
 
@@ -144,7 +144,7 @@ public:
 
 	//In-Fiber functions
 	void ReleasePrevious();
-	static void YieldForCounter(CFiberCounter* counter);
+	static void YieldForCounter(CJobCounter* counter);
 	void SetNextFiber(CFiber* nextFiber);
 	void EndJob();
 	static void Log(std::string, ...);
