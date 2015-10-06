@@ -6,6 +6,7 @@
 CSpinlock enQueueLock;
 
 CFiberScheduler::CFiberScheduler()
+	: m_nextJobId(0)
 {
 }
 
@@ -138,10 +139,12 @@ bool CFiberScheduler::IsActive()
 	return false;
 }
 
-void CFiberScheduler::Schedule(SJobRequest& job, Nylon::EJobPriority prio)
+Nylon::TJobID CFiberScheduler::Schedule(SJobRequest& job, Nylon::EJobPriority prio)
 {
 	CScopedLock lock(&enQueueLock);
+	Nylon::TJobID newID = m_nextJobId++;
 	m_jobQueue[prio].push(job);
+	return m_nextJobId;
 }
 
 void CFiberScheduler::FiberYield(CFiber* pFiber, CJobCounter* pCounter)

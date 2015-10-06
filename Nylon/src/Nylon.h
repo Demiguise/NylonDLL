@@ -81,6 +81,13 @@ namespace Nylon
 		eFP_Num
 	};
 
+	enum ELogLevel
+	{
+		eLL_Info,
+		eLL_Warning,
+		eLL_Error
+	};
+
 	//Init - fiberCount is the number of available Fiber objects, maxThreads is the number of concurrently active fibers.
 	NYLON_API void Init(const int fiberCount, const int maxThreads);
 	NYLON_API void Shutdown();

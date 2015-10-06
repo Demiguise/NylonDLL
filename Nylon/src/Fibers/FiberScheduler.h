@@ -24,7 +24,7 @@ public:
 	void Shutdown();
 
 	CFiber* AcquireNextFiber(CFiber* pOldFiber);
-	void Schedule(SJobRequest& job, Nylon::EJobPriority prio);
+	Nylon::TJobID Schedule(SJobRequest& job, Nylon::EJobPriority prio);
 	static void FiberYield(CFiber* pFiber, CJobCounter* pCounter);
 
 	void StartJobs();
@@ -56,6 +56,8 @@ private:
 	TActiveFibers* m_activeFibers;
 	TAtomicFiberMap m_yieldedFibers;
 	std::queue<SJobRequest> m_jobQueue[Nylon::eFP_Num];
+
+	Nylon::TJobID m_nextJobId;
 
 	LoggingCallback m_logCallback;
 };
