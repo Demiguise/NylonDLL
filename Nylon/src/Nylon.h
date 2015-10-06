@@ -1,3 +1,5 @@
+#ifndef __NYLON_DLL_H__
+#define __NYLON_DLL_H__
 //API Outline
 //Memory
 //Initialising the NylonAPI via the Nylon::Init call will create the relevant objects in the DLL's memory space(? I think, unsure how DLL Memory actually works).
@@ -89,3 +91,5 @@ namespace Nylon
 
 	NYLON_API void SetLoggingCallback();
 };
+
+#endif //~__NYLON_DLL_H__

@@ -26,11 +26,13 @@ NYLON_API Nylon::TJobID Nylon::QueueJob(LPFIBER_START_ROUTINE pJob, EJobPriority
 	job.m_pJobData = pJobData;
 	job.m_pCounter = pCounter;
 	g_pFiberScheduler->Schedule(job, jobPriority);
+
+	return 0;
 }
 
 NYLON_API bool Nylon::CancelJob(const TJobID jobToCancel)
 {
-
+	return false;
 }
 
 NYLON_API void Nylon::SetLoggingCallback()

@@ -147,7 +147,7 @@ void CFiberScheduler::Schedule(SJobRequest& job, Nylon::EJobPriority prio)
 void CFiberScheduler::FiberYield(CFiber* pFiber, CJobCounter* pCounter)
 {
 	pFiber->SetState(CFiber::eFS_Yielded);
-	m_yieldedFibers.insert(TAtomicFiberPair(pFiber, pCounter));
+	g_pFiberScheduler->m_yieldedFibers.insert(TAtomicFiberPair(pFiber, pCounter));
 }
 
 void CFiberScheduler::UpdateActiveFibers(CFiber* pFiber)
