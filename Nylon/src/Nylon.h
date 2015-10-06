@@ -65,6 +65,8 @@
 #define NYLON_API _declspec(dllimport)
 #endif
 
+class CJobCounter;
+
 namespace Nylon
 {
 	typedef unsigned int TJobID;

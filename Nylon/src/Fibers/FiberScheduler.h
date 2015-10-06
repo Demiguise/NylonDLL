@@ -24,7 +24,7 @@ public:
 	void Shutdown();
 
 	CFiber* AcquireNextFiber(CFiber* pOldFiber);
-	void Schedule(SJobRequest& job, Nylon::EJobPriority prio, CFiberJobData& data, CJobCounter* pCounter = NULL);
+	void Schedule(SJobRequest& job, Nylon::EJobPriority prio);
 	static void FiberYield(CFiber* pFiber, CJobCounter* pCounter);
 
 	void StartJobs();

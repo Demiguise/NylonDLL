@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "PerfDB.h"
-#include "Common/Spinlock.h"
+#include "Util/Spinlock.h"
 #include <mutex>
 
 PerformanceDB* g_pPerfDB = NULL;

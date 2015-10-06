@@ -5,11 +5,8 @@
 
 CSpinlock enQueueLock;
 
-CFiberScheduler* g_pFiberScheduler = NULL;
-
 CFiberScheduler::CFiberScheduler()
 {
-	g_pFiberScheduler = this;
 }
 
 void CFiberScheduler::Initialise(const int maxFiberCount, const int maxThreads)
@@ -141,10 +138,8 @@ bool CFiberScheduler::IsActive()
 	return false;
 }
 
-void CFiberScheduler::Schedule(SJobRequest& job, Nylon::EJobPriority prio, CFiberJobData& data, CJobCounter* pCounter /*= NULL */)
+void CFiberScheduler::Schedule(SJobRequest& job, Nylon::EJobPriority prio)
 {
-	job.m_jobData = data;
-	job.m_pCounter = pCounter;
 	CScopedLock lock(&enQueueLock);
 	m_jobQueue[prio].push(job);
 }

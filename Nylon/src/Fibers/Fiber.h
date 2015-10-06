@@ -95,7 +95,7 @@ struct SJobRequest
 	{
 		m_jobName = rhs.m_jobName;
 		m_pFunc = rhs.m_pFunc;
-		m_jobData = rhs.m_jobData;
+		m_pJobData = rhs.m_pJobData;
 		m_pCounter = rhs.m_pCounter;
 		m_pFiber = rhs.m_pFiber;
 		return *this;
@@ -103,7 +103,7 @@ struct SJobRequest
 
 	std::string m_jobName;
 	LPFIBER_START_ROUTINE m_pFunc;
-	CFiberJobData m_jobData;
+	void* m_pJobData;
 	CJobCounter* m_pCounter;
 	CFiber* m_pFiber;
 };
