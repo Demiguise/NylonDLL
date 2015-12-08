@@ -14,6 +14,9 @@
 
 #define __NYLON__GETJOBINFO static_cast<CFiber*>(GetFiberData())->GetJobInfo()->m_jobData
 
+class FiberGraphNode;
+
+
 class CFiberScheduler
 {
 public:
@@ -24,7 +27,10 @@ public:
 	void Shutdown();
 
 	CFiber* AcquireNextFiber(CFiber* pOldFiber);
+
 	Nylon::TJobID Schedule(SJobRequest& job, Nylon::EJobPriority prio);
+	void CancelJob(Nylon::TJobID jobID);
+
 	static void FiberYield(CFiber* pFiber, CJobCounter* pCounter);
 
 	void StartJobs();
@@ -35,7 +41,6 @@ public:
 
 	typedef void(*LoggingCallback) (int, const char*);
 	void SetLoggingCallback(LoggingCallback callback);
-
 private:
 	typedef std::pair<SThreadInfo, CFiber*> TActiveFibers;
 	typedef std::map<CFiber*, CJobCounter*> TAtomicFiberMap;

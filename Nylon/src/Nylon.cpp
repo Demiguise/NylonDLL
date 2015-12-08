@@ -19,12 +19,12 @@ NYLON_API void Nylon::Shutdown()
 	delete g_pFiberScheduler;
 }
 
-NYLON_API Nylon::TJobID Nylon::QueueJob(LPFIBER_START_ROUTINE pJob, EJobPriority jobPriority, void* pJobData, CJobCounter* pCounter /*=NULL*/)
+NYLON_API Nylon::TJobID Nylon::QueueJob(LPFIBER_START_ROUTINE pJob, EJobPriority jobPriority, void* pJobData, TCounterID counterId /*= 0*/)
 {
 	SJobRequest job;
 	job.m_pFunc = pJob;
 	job.m_pJobData = pJobData;
-	job.m_pCounter = pCounter;
+	job.m_counterId = counterId;
 	g_pFiberScheduler->Schedule(job, jobPriority);
 
 	return 0;

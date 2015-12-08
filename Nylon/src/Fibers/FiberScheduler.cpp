@@ -147,6 +147,15 @@ Nylon::TJobID CFiberScheduler::Schedule(SJobRequest& job, Nylon::EJobPriority pr
 	return m_nextJobId;
 }
 
+void CFiberScheduler::CancelJob(Nylon::TJobID jobID)
+{
+	for (int i = 0; i < m_maxRunningFibers; ++i)
+	{
+		CFiber* pActiveFiber = m_activeFibers[i].second;
+		if (pActiveFiber->GetJobInfo()->m_pJobID)
+	}
+}
+
 void CFiberScheduler::FiberYield(CFiber* pFiber, CJobCounter* pCounter)
 {
 	pFiber->SetState(CFiber::eFS_Yielded);

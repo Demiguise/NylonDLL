@@ -150,6 +150,7 @@
     <ClInclude Include="src\Fibers\CoreThread.h" />
     <ClInclude Include="src\Fibers\Fiber.h" />
     <ClInclude Include="src\Fibers\FiberScheduler.h" />
+    <ClInclude Include="src\Ideas.hpp" />
     <ClInclude Include="src\Nylon.h" />
     <ClInclude Include="src\stdafx.h" />
     <ClInclude Include="src\targetver.h" />

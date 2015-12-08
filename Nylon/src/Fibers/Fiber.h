@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "Util/Timer.h"
+#include "Nylon.h"
 
 #define FIBER_ENABLE_DEBUG 1
 
@@ -79,8 +80,8 @@ private:
 	CJobCounter& operator= (CJobCounter& rhs); //Forcing no copy operator
 	std::string m_funcName;
 	TCounter m_counter;
+	Nylon::TCounterID m_id;
 };
-
 
 #define CREATEJOB(name, func) SJobRequest name((LPFIBER_START_ROUTINE)func, #func)
 
@@ -104,8 +105,9 @@ struct SJobRequest
 	std::string m_jobName;
 	LPFIBER_START_ROUTINE m_pFunc;
 	void* m_pJobData;
-	CJobCounter* m_pCounter;
 	CFiber* m_pFiber;
+	Nylon::TJobID m_jobId;
+	Nylon::TCounterID m_counterId;
 };
 
 class CFiber

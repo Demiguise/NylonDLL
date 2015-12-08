@@ -28,7 +28,7 @@
 //Then, if the binding is successful, the fibre will switch over to the new function and begin doing the next job.
 
 //Fibres
-//Fibres are smaller versions of threads, they come with their own stack space and fibre storage. In addition, they are extremely easy to switch between.
+//Fibres are smaller versions of threads, they come with their own stack space and local memory for easy access. In addition, they are extremely easy to switch between.
 //Fibres do, however, run on threads and are started via a thread with a call to ConvertThreadToFiber.
 //Fibres have to be run in a chain continously. If they need to wait until there are available jobs then they will wait in a spinlock.
 //If the fibre somehow exits without having another one ready then the thread running the fibre will be destroyed.
@@ -46,20 +46,37 @@
 // Finished - Has finished the bound job
 // HasNextFiber - Has taken a job off of the queue and is ready to switch
 // Releasing - Has passed over to new fibre and is ready to be released
-// Yielded - Has yielded to another fibre, until a linked timer has been decremented to zero
+// Yielded - Has yielded to another fibre, until a linked counter has been decremented to zero
 
 
 //Rough Enduser workflow
 //
 //1) Initialise via Init API call, setting up the workspace. If in debug, setup logging callback.
 //2) Declare jobs descriptions in their local area.
-//3) Set up context for job and make sure it has a long enough lifetime.
+//3) Set up context for job and make sure it has a long enough lifetime. Memory, etc.
 //4) Queue the job via API call, recieve back ID for job.
 //5) Let job run.
 //6) Get callback? (Dunno, haven't thought about that too much.)
 //7) If we need to cancel, call the API function to delete that job from the queue or force it to stop.
 //8) If we're quitting the application, shutdown the engine.
 //9) During periods of inactivity, we should probably have the ability to let each fiber die so we're not wasting CPU. (Some kind of "Stop" or "Pause" function?)
+
+//Atomic Counters
+//The counters need to be instantiated and kept behind the scenes. They are quite small so shoudn't take up all that much space.
+//Should these be perhaps limited to each fiber? Should they have a link in some way to the fibre? 
+//AKA, Fiber 1 uses Counter 1 which is in the 0th index, Fiber 2 uses counter 2, etc etc.
+//This would re-use the counters whenever possible, but I'm worried about stuff getting really out of sync if someone cancels a job and causes all sorts to happen.
+
+//Issues/Concerns I need to think about
+//Pointer caching to certain parts might be terribad, depending. Don't want to crash it.
+//		Maybe solution is to create a NULL counter that just spams out errors instead of crashing?
+//		How robust should the library be against crashing? Probably as much as possibly can do. Cuz, y'know. Crashing in someone else's library is annoying.
+//How should cancelling a job work?
+//		Have to be concerned about job heirarchies. How do they link together? In a graph perhaps? Once I kill the parent job, I guess the child jobs should also stop.
+//		This means that this system needs to have a graph representation of everything and how each job interacts with the others. This could be kind of cool actually.
+//		I would also need to rework how each fiber looks/works/grabs jobs I think. I want there to be a detailed understand of which jobs are doing what at which time.
+//		Then I can output that to an enduser under some debug conditions that would make it muuuuuuch easier for them to understand what's happening with their data.
+//		This does have to be a special case though as the memory usage would then increase quuiiitteee a bit. The fiber scheduler is going to have to keep track of all this graphing.
 
 #ifdef NYLON_EXPORTS
 #define NYLON_API _declspec(dllexport)
@@ -72,6 +89,7 @@ class CJobCounter;
 namespace Nylon
 {
 	typedef unsigned int TJobID;
+	typedef unsigned int TCounterID;
 
 	enum EJobPriority
 	{
@@ -92,8 +110,10 @@ namespace Nylon
 	NYLON_API void Init(const int fiberCount, const int maxThreads);
 	NYLON_API void Shutdown();
 
+	NYLON_API TCounterID CreateJobCounter();
+
 	//QueueJob - Puts a new job request into the the queue with the specified priority, data and counter.
-	NYLON_API TJobID QueueJob(LPFIBER_START_ROUTINE pJob, EJobPriority jobPriority, void* pJobData, CJobCounter* pCounter = NULL);
+	NYLON_API TJobID QueueJob(LPFIBER_START_ROUTINE pJob, EJobPriority jobPriority, void* pJobData, TCounterID counterId = 0);
 	NYLON_API bool CancelJob(const TJobID jobToCancel);
 
 	NYLON_API void SetLoggingCallback();
