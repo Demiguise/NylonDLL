@@ -48,7 +48,6 @@
 // Releasing - Has passed over to new fibre and is ready to be released
 // Yielded - Has yielded to another fibre, until a linked counter has been decremented to zero
 
-
 //Rough Enduser workflow
 //
 //1) Initialise via Init API call, setting up the workspace. If in debug, setup logging callback.
@@ -86,6 +85,8 @@
 
 class CJobCounter;
 
+// This is the external side of the NylonDLL and handles the user's requests.
+
 namespace Nylon
 {
 	typedef unsigned int TJobID;
@@ -116,7 +117,8 @@ namespace Nylon
 	NYLON_API TJobID QueueJob(LPFIBER_START_ROUTINE pJob, EJobPriority jobPriority, void* pJobData, TCounterID counterId = 0);
 	NYLON_API bool CancelJob(const TJobID jobToCancel);
 
-	NYLON_API void SetLoggingCallback();
+	typedef void (LoggingCallback)(int, const char*, ...);
+	NYLON_API void SetLoggingCallback(LoggingCallback callback);
 };
 
 #endif //~__NYLON_DLL_H__
