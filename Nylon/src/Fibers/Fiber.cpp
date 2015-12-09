@@ -19,18 +19,16 @@ CFiber::CFiber(size_t stack)
 	, m_pPrevFiber(NULL)
 	, m_pNextFiber(NULL)
 	, m_stackSize(stack)
-	, m_state(eFS_InActive)
-{
-}
+	, m_state(eFS_InActive) {}
 
 CFiber::CFiber()
 	: m_pFiber(NULL)
 	, m_pPrevFiber(NULL)
 	, m_pNextFiber(NULL)
 	, m_stackSize(0)
-	, m_state(eFS_InActive)
-{
-}
+	, m_state(eFS_InActive) {}
+
+CFiber::~CFiber() {}
 
 void CFiber::Init(UINT16 id, size_t stackSize)
 {
@@ -57,7 +55,7 @@ void CFiber::Bind(SJobRequest& job)
 
 void CFiber::Release()
 {
-	assert(InState(eFS_Finished));
+	assert(IsInState(eFS_Finished));
 	if (m_pFiber)
 	{
 		DeleteFiber(m_pFiber);
@@ -66,10 +64,9 @@ void CFiber::Release()
 	}
 }
 
-bool CFiber::InState(EFiberState state) const
+bool CFiber::IsInState(EFiberState state) const
 {
-	EFiberState curState = m_state.load();
-	return curState == state;
+	return m_state.load() == state;
 }
 
 bool CFiber::AtomicStateSwitch(EFiberState oldState, EFiberState newstate)
@@ -176,36 +173,27 @@ void CFiber::EndJob()
 		sprintf_s(buffer, "[F:%u] ", pFiber->GetID());
 
 		frmt.insert(0, buffer);
-		if (!pFiber->m_personalLog.empty())
-		{
-			float timeFromLast = Timer::GetTimeBetween(pFiber->m_personalLog.back().timeStamp, Timer::GetCountNow());
-			sprintf_s(buffer, " [%f]", timeFromLast);
-			frmt.insert(frmt.length(), buffer);
-		}
 		frmt.append("\n");
 		va_list args;
 		va_start(args, frmt);
 		vsnprintf_s(buffer, 512, frmt.c_str(), args);
 		va_end(args);
-#if FIBER_OUTPUT_ON
-		PushToLogs(buffer);
-#endif //~FIBER_OUTPUT_ON
 
 		pFiber->m_personalLog.push_back(PersonalLogEntry(GetCurrentThreadId(), buffer));
 	}
 }
 
 typedef struct tagTHREADNAME_INFO
-{ 
+{
 	// I think I copied this from an MSDN article somewhere
-  DWORD dwType; // must be 0x1000
-  LPCSTR szName; // pointer to name (in user addr space)
-  DWORD dwThreadID; // thread ID (-1=caller thread)
-  DWORD dwFlags; // reserved for future use, must be zero
+	DWORD dwType; // must be 0x1000
+	LPCSTR szName; // pointer to name (in user addr space)
+	DWORD dwThreadID; // thread ID (-1=caller thread)
+	DWORD dwFlags; // reserved for future use, must be zero
 } THREADNAME_INFO;
 
 #if FIBER_ENABLE_DEBUG
-/*Static*/ void CFiber::SetThreadName(LPCSTR name)
+/*Static*/ void CFiber::SetThreadName(LPCSTR name /*=UNNAMED*/)
 {
 	static const DWORD MS_VC_EXCEPTION=0x406D1388;
 	THREADNAME_INFO info;

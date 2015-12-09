@@ -1,9 +1,14 @@
 #include "stdafx.h"
 #include "NylonEngine.h"
 
-CNylonEngine::CNylonEngine()
-{
+#ifndef NDEBUG
+#define __NYLON_ALLOW_FALLBACK_LOGGING__
+#endif
 
+CNylonEngine::CNylonEngine()
+	: m_loggingCallback(NULL)
+{
+	
 }
 
 CNylonEngine::~CNylonEngine()
@@ -30,6 +35,7 @@ void CNylonEngine::Log(Nylon::ELogLevel level, const char* frmt, ...)
 		m_loggingCallback(level, frmt, args);
 		va_end(args);
 	}
+#ifdef __NYLON_ALLOW_FALLBACK_LOGGING__
 	else
 	{
 		//Default to outputing debug string to visual studio
@@ -51,4 +57,10 @@ void CNylonEngine::Log(Nylon::ELogLevel level, const char* frmt, ...)
 
 		delete newFormat;
 	}
+#endif //~__NYLON_ALLOW_FALLBACK_LOGGING__
+}
+
+void CNylonEngine::SetLoggingCallback(Nylon::TLoggingCallback callback)
+{
+	m_loggingCallback = callback;
 }

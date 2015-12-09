@@ -22,33 +22,27 @@ public:
 
 	void AddData(const int data)
 	{
-		UJobData newData;
-		newData.i = data;
-		m_datas.push_back(newData);
+		m_datas.emplace_back(data);
 	}
 	void AddData(const float data)
 	{
-		UJobData newData;
-		newData.f = data;
-		m_datas.push_back(newData);
+		m_datas.emplace_back(data);
 	}
 	void AddData(const bool data)
 	{
-		UJobData newData;
-		newData.b = data;
-		m_datas.push_back(newData);
+		m_datas.emplace_back(data);
 	}
 	void AddData(void* data)
 	{
-		UJobData newData;
-		newData.pV = data;
-		m_datas.push_back(newData);
+		m_datas.emplace_back(data);
 	}
 
 	int GetInt(const int index) { return m_datas[index].i; }
 	float GetFloat(const int index) { return m_datas[index].f; }
 	bool GetBool(const int index) { return m_datas[index].b; }
 	void* GetPointer(const int index) { return m_datas[index].pV; }
+
+	int GetSize() { return m_datas.size(); }
 private:
 	union UJobData
 	{
@@ -125,12 +119,9 @@ public:
 		eFS_Yielded
 	};
 
-	CFiber(LPFIBER_START_ROUTINE func, size_t stack = 0);
 	CFiber(size_t stack);
 	CFiber();
-	~CFiber() 
-	{
-	}
+	~CFiber();
 
 	void Init(UINT16 id, size_t stack);
 	void Bind(SJobRequest& job);
@@ -146,10 +137,9 @@ public:
 	static void Log(std::string, ...);
 
 	UINT16 GetID() const { return m_id; }
-	void SetID(UINT16 id) { m_id = id; }
 	SJobRequest* GetJobInfo() { return &m_job; }
 
-	bool inline InState(EFiberState state) const;
+	bool inline IsInState(EFiberState state) const;
 	bool AtomicStateSwitch(EFiberState oldState, EFiberState newState);
 	void inline SetState(EFiberState newState);
 
@@ -159,19 +149,11 @@ public:
 	bool IsActive() const { return m_state == eFS_Active; }
 
 private:
-	SJobRequest m_job;
-	UINT16 m_id;
-	size_t m_stackSize;
-	std::atomic<EFiberState> m_state;
-	LPVOID m_pFiber;
-	CFiber* m_pPrevFiber;
-	CFiber* m_pNextFiber;
-
 	struct PersonalLogEntry
 	{
 		PersonalLogEntry(DWORD id, std::string line)
 			: threadID(id)
-			,	entry(line)
+			, entry(line)
 		{
 			timeStamp = Timer::GetCountNow();
 		}
@@ -180,9 +162,18 @@ private:
 		UINT64 timeStamp;
 	};
 	typedef std::vector<PersonalLogEntry> TFiberPersonalLog;
-	TFiberPersonalLog m_personalLog;
 
 	static void SetThreadName(LPCSTR name = "UNNAMED");
+
+	TFiberPersonalLog m_personalLog;
+
+	SJobRequest m_job;
+	UINT16 m_id;
+	size_t m_stackSize;
+	std::atomic<EFiberState> m_state;
+	LPVOID m_pFiber;
+	CFiber* m_pPrevFiber;
+	CFiber* m_pNextFiber;
 };
 
 #endif //~__CFIBER_H__

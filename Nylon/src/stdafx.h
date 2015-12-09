@@ -9,7 +9,6 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-#define FIBER_OUTPUT_ON 1
 #define PERF_LOGS_ON 0
 
 #define __NYLON_RELEASE_FIBER if(x) { x->Release(); x = NULL; }

@@ -60,6 +60,9 @@
     <ClInclude Include="src\Ideas.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\NylonEngine.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\dllmain.cpp">
@@ -94,6 +97,9 @@
     </ClCompile>
     <ClCompile Include="src\Fibers\CoreThread.cpp">
       <Filter>Source Files\Fibers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\NylonEngine.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

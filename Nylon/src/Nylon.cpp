@@ -25,7 +25,7 @@ NYLON_API Nylon::TJobID Nylon::QueueJob(LPFIBER_START_ROUTINE pJob, EJobPriority
 	job.m_pFunc = pJob;
 	job.m_pJobData = pJobData;
 	job.m_counterId = counterId;
-	g_pFiberScheduler->Schedule(job, jobPriority);
+	g_pNylonEngine->Schedule(job, jobPriority);
 
 	return 0;
 }
@@ -35,10 +35,10 @@ NYLON_API bool Nylon::CancelJob(const TJobID jobToCancel)
 	return false;
 }
 
-NYLON_API void Nylon::SetLoggingCallback(LoggingCallback callback)
+NYLON_API void Nylon::SetLoggingCallback(TLoggingCallback callback)
 {
 	if (g_pNylonEngine)
 	{
-		g_pNylonEngine->m_loggingCallback = callback;
+		g_pNylonEngine->SetLoggingCallback(callback);
 	}
 }

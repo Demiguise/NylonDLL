@@ -117,8 +117,8 @@ namespace Nylon
 	NYLON_API TJobID QueueJob(LPFIBER_START_ROUTINE pJob, EJobPriority jobPriority, void* pJobData, TCounterID counterId = 0);
 	NYLON_API bool CancelJob(const TJobID jobToCancel);
 
-	typedef void (LoggingCallback)(int, const char*, ...);
-	NYLON_API void SetLoggingCallback(LoggingCallback callback);
+	typedef void (*TLoggingCallback)(int, const char*, ...);
+	NYLON_API void SetLoggingCallback(TLoggingCallback callback);
 };
 
 #endif //~__NYLON_DLL_H__

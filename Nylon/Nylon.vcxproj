@@ -152,6 +152,7 @@
     <ClInclude Include="src\Fibers\FiberScheduler.h" />
     <ClInclude Include="src\Ideas.hpp" />
     <ClInclude Include="src\Nylon.h" />
+    <ClInclude Include="src\NylonEngine.h" />
     <ClInclude Include="src\stdafx.h" />
     <ClInclude Include="src\targetver.h" />
     <ClInclude Include="src\Util\JobQueue.h" />
@@ -166,6 +167,7 @@
     <ClCompile Include="src\Fibers\Fiber.cpp" />
     <ClCompile Include="src\Fibers\FiberScheduler.cpp" />
     <ClCompile Include="src\Nylon.cpp" />
+    <ClCompile Include="src\NylonEngine.cpp" />
     <ClCompile Include="src\stdafx.cpp" />
     <ClCompile Include="src\Util\JobQueue.cpp" />
     <ClCompile Include="src\Util\PerfDB.cpp" />

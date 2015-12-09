@@ -3,7 +3,6 @@
 
 #include "Util/Spinlock.h"
 #include "Fibers/Fiber.h"
-#include <list>
 
 class CJobQueue
 {
@@ -16,9 +15,10 @@ public:
 	bool Empty() const { return m_queue.empty(); }
 
 private:
+	typedef std::queue<SJobRequest> TJobRequests;
+
 	CSpinlock m_dequeueLock;
 	CSpinlock m_enqueueLock;
-	typedef std::list<SJobRequest> TJobRequests;
 	TJobRequests m_queue;
 };
 
