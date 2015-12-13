@@ -63,6 +63,9 @@
     <ClInclude Include="src\NylonEngine.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Test\Testing.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\dllmain.cpp">

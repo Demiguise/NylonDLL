@@ -51,6 +51,7 @@
 //Rough Enduser workflow
 //
 //1) Initialise via Init API call, setting up the workspace. If in debug, setup logging callback.
+	// Should there be a default init? 8 jobs per core available maybe?
 //2) Declare jobs descriptions in their local area.
 //3) Set up context for job and make sure it has a long enough lifetime. Memory, etc.
 //4) Queue the job via API call, recieve back ID for job.

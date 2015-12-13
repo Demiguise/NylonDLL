@@ -13,6 +13,7 @@
 #define FIBER_ENABLE_DEBUG 1
 
 class CFiber;
+class CNylonEngine;
 
 class CFiberJobData
 {
@@ -123,7 +124,7 @@ public:
 	CFiber();
 	~CFiber();
 
-	void Init(UINT16 id, size_t stack);
+	void Init(UINT16 id, size_t stack, CNylonEngine* pEngine);
 	void Bind(SJobRequest& job);
 	void Release();
 
@@ -174,6 +175,7 @@ private:
 	LPVOID m_pFiber;
 	CFiber* m_pPrevFiber;
 	CFiber* m_pNextFiber;
+	CNylonEngine* m_pEngine;
 };
 
 #endif //~__CFIBER_H__

@@ -155,6 +155,7 @@
     <ClInclude Include="src\NylonEngine.h" />
     <ClInclude Include="src\stdafx.h" />
     <ClInclude Include="src\targetver.h" />
+    <ClInclude Include="src\Test\Testing.hpp" />
     <ClInclude Include="src\Util\JobQueue.h" />
     <ClInclude Include="src\Util\PerfDB.h" />
     <ClInclude Include="src\Util\ScopedTimer.h" />

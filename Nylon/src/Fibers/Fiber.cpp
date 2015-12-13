@@ -3,6 +3,8 @@
 #include "FiberScheduler.h"
 #include "Util/ScopedTimer.h"
 
+#include "../NylonEngine.h"
+
 static const char* FiberStateStrings[] =
 {
 	"InActive",
@@ -30,10 +32,11 @@ CFiber::CFiber()
 
 CFiber::~CFiber() {}
 
-void CFiber::Init(UINT16 id, size_t stackSize)
+void CFiber::Init(UINT16 id, size_t stackSize, CNylonEngine* pEngine)
 {
 	m_id = id;
 	m_stackSize = stackSize;
+	m_pEngine = pEngine;
 }
 
 void CFiber::Bind(SJobRequest& job)
@@ -101,12 +104,12 @@ void CFiber::ReleasePrevious()
 
 	if (m_pPrevFiber)
 	{
-		if (m_pPrevFiber->InState(eFS_Finished))
+		if (m_pPrevFiber->IsInState(eFS_Finished))
 		{
 			m_pPrevFiber->Release();
 			m_pPrevFiber = NULL;
 		}
-		else if (!m_pPrevFiber->InState(eFS_Yielded))
+		else if (!m_pPrevFiber->IsInState(eFS_Yielded))
 		{
 			Log("Last fiber hasn't finished yet?");
 			DebugBreak();
