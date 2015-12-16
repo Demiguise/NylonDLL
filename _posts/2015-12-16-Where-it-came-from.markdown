@@ -14,7 +14,11 @@ So much so that I wanted to try and make something with it that would be benefic
 Raycasting is simple to start off with and gets more complex the more you go down. It's also perfect for using fibres because of how the data and the process is laid out.
 At the beginning, each individual pixel can be thought of as a single job that runs parallel to every other pixel that's currently running. You do a line-intersection test on your geometry and, if it hits something, you colour it.
 
-After a couple days of initial tinkering I got something out of it, a very cool image of a couple of spheres (Or circles, if you want). I wanted to progress some more and push forward with getting the ray tracer to look nicer and nicer.
+After a couple days of initial tinkering I got something out of it, a very cool image of a couple of spheres (Or circles, if you want):
+
+![Screenshot]({{ site.url }}/NylonDLL/assets/RaycasterSpheres.png)
+
+I wanted to progress some more and push forward with getting the ray tracer to look nicer and nicer.
 I was really quite excited until I kept hitting stalls and crashes with the multithreading. My naive implementation of a scheduler was holding me back a bunch. It wasn't atomic, didn't really anything without a lock on it.
 
 It frustrated me and I wanted to fix it, so I thought to take it out of the raytracer for a bit to focus on it. A DLL. I've not made one before, not really thought that much about API design but I've decided to design something that's straight forward to use.
