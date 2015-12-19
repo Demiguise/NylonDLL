@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Where it came from
-date: {}
+date: 2015-12-16 21:55:00
 categories: null
 published: true
 ---
