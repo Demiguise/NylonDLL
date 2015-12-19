@@ -1,9 +1,11 @@
 ---
 layout: post
-title:  "Where it came from"
-date:   2015-12-16 22:15:00
-categories: 
+title: Where it came from
+date: {}
+categories: null
+published: true
 ---
+
 
 Nylon was born out of watching a talk at GDC from Naughty Dog's Tech lead. In it, he detailed various parts of their engine and how they continued their work from the PS3 job system into the next age.
 The whole thing was centralised around the HD remastering of 'The Last of Us', bringing it up to 60 fps through the use of fibers. 
@@ -12,11 +14,11 @@ That sounded **incredibly** cool to me.
 
 So much so that I wanted to try and make something with it that would be beneficial to my learning about new technologies. Thus I went ahead and tried to make a raycaster. 
 Raycasting is simple to start off with and gets more complex the more you go down. It's also perfect for using fibres because of how the data and the process is laid out.
-At the beginning, each individual pixel can be thought of as a single job that runs parallel to every other pixel that's currently running. You do a line-intersection test on your geometry and, if it hits something, you colour it.
+At the beginning, each individual pixel can be thought of as a single job that runs parallel to every other pixel that's currently running. You do a line-intersection test on your geometry and, if it hits something, you colour it
 
 After a couple days of initial tinkering I got something out of it, a very cool image of a couple of spheres (Or circles, if you want):
 
-![Screenshot]({{ site.url }}/NylonDLL/assets/RaycasterSpheres.png)
+![Raycaster Spheres.png]({{site.baseurl}}/_posts/Raycaster Spheres.png)
 
 I wanted to progress some more and push forward with getting the ray tracer to look nicer and nicer.
 I was really quite excited until I kept hitting stalls and crashes with the multithreading. My naive implementation of a scheduler was holding me back a bunch. It wasn't atomic, didn't really anything without a lock on it.
