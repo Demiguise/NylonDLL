@@ -1,5 +1,9 @@
 ---
-published: false
+published: true
+layout: post
+title:  "What it is and isn't - Part 1"
+date:   2015-12-19 17:50:00
+categories: 
 ---
 
 As I spoke about in the last post, this project has a mission statement for what it will become which i think is important to expand upon. 
